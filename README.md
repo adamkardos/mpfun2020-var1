@@ -21,3 +21,10 @@ mpfun2020-var1 = { git="https://github.com/jacobwilliams/mpfun2020-var1.git" }
 ### See also
  * Original code from: https://www.davidhbailey.com/dhbsoftware/
  * GitHub repo (both var1 and var2): https://github.com/jacobwilliams/MPFUN2020
+
+### test_drive
+To only run the tests in the test_suite:
+
+```
+fpm test tester
+```

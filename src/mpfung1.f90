@@ -94,7 +94,7 @@ private &
   mp_adddz, mp_addzd, mp_adddcz, mp_addzdc, mp_addrz, mp_addzr, &
   mp_subrr, mp_subdr, mp_subrd, mp_subir, mp_subri, mp_subzz, &
   mp_subdz, mp_subzd, mp_subdcz, mp_subzdc, mp_subrz, mp_subzr, &
-  mp_negr, mp_negz, &
+  mp_negr, mp_negz, mp_negz_arr, &
   mp_mulrr, mp_muldr, mp_mulrd, mp_mulir, mp_mulri, mp_mulzz, &
   mp_muldz, mp_mulzd, mp_muldcz, mp_mulzdc, mp_mulrz, mp_mulzr, &
   mp_divrr, mp_divdr, mp_divrd, mp_divir, mp_divri, mp_divzz, &
@@ -187,6 +187,7 @@ interface operator (-)
   module procedure mp_subzr
   module procedure mp_negr
   module procedure mp_negz
+  module procedure mp_negz_arr
 end interface
 
 interface operator (*)
@@ -1327,6 +1328,17 @@ contains
     call mpceq (za%mpc, mp_negz%mpc, mpnw)
     mp_negz%mpc(2) = - mp_negz%mpc(2)
     mp_negz%mpc(l2+2) = - mp_negz%mpc(l2+2)
+    return
+  end function
+
+  function mp_negz_arr (za_arr)
+    implicit none
+    type (mp_complex) , dimension(:) , intent (in):: za_arr
+    type (mp_complex) , dimension(lbound(za_arr, 1):ubound(za_arr, 1)) :: mp_negz_arr
+    integer :: i
+    do i=lbound(za_arr, 1), ubound(za_arr, 1)
+      mp_negz_arr(i) = -za_arr(i)
+    end do
     return
   end function
 
