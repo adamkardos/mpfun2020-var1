@@ -90,6 +90,7 @@ end type
 private &
   mp_eqrr, mp_eqdr, mp_eqrd, mp_eqir, mp_eqri, mp_eqra, mp_eqrz, &
   mp_eqzr, mp_eqzz, mp_eqdz, mp_eqzd, mp_eqdcz, mp_eqzdc, &
+  mp_eqzarr_r, &
   mp_addrr, mp_adddr, mp_addrd, mp_addir, mp_addri, mp_addzz, &
   mp_adddz, mp_addzd, mp_adddcz, mp_addzdc, mp_addrz, mp_addzr, &
   mp_subrr, mp_subdr, mp_subrd, mp_subir, mp_subri, mp_subzz, &
@@ -148,6 +149,7 @@ interface assignment (=)
   module procedure mp_eqzz
   module procedure mp_eqdz
   module procedure mp_eqdcz
+  module procedure mp_eqzarr_r
 
 !>  In variant #1, uncomment these lines:
   module procedure mp_eqrd
@@ -857,6 +859,19 @@ contains
     za%mpc(l1) = mpwds6
     call mpeq (rb%mpr, za%mpc, mpnw)
     call mpeq (r1%mpr, za%mpc(l1:), mpnw)
+    return
+  end subroutine
+
+  subroutine mp_eqzarr_r (z_arr, r)
+    implicit none
+    type (mp_complex) , dimension(:) , intent (out) :: z_arr
+    type (mp_real) , intent (in) :: r
+    integer :: i
+!
+    do i=lbound(z_arr, 1), ubound(z_arr, 1)
+      z_arr(i) = r
+    end do
+!
     return
   end subroutine
 

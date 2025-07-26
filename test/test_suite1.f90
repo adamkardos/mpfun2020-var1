@@ -16,7 +16,9 @@ subroutine collect_suite1(testsuite)
     new_unittest("mp_negz_arr", &
       test_mp_negz_arr), &
     new_unittest("mp_mulz_zarr", &
-      test_mp_mulz_zarr) &
+      test_mp_mulz_zarr), &
+    new_unittest("mp_eqzarr_r", &
+      test_mp_eqzarr_r) &
     ]
 
 end subroutine collect_suite1
@@ -121,6 +123,41 @@ implicit none
   end do
 !
 end subroutine test_mp_mulz_zarr
+!}}}
+
+!{{{ mp_eqzarr_r
+subroutine test_mp_eqzarr_r(error)
+use mpmodule
+implicit none
+!
+  type(error_type), allocatable, intent(out) :: error
+!
+  integer :: i, j
+!
+  type(mp_real) :: rval
+!
+  integer , dimension(3) , parameter :: lbound_arr = (/1, 0, -2/)
+  integer , dimension(3) , parameter :: ubound_arr = (/5, 4, +2/)
+  type(mp_complex) , dimension(:) , allocatable :: arr
+!
+  rval = '1.234'
+!
+  do i=1, size(lbound_arr, 1)
+    allocate( &
+      arr(lbound_arr(i) : ubound_arr(i)) &
+    )
+!
+    arr = rval
+!
+    do j=lbound_arr(i), ubound_arr(i)
+      call check(error, arr(j).eq.rval, .true.)
+      if (allocated(error)) return
+    end do
+!
+    deallocate(arr)
+  end do
+!
+end subroutine test_mp_eqzarr_r
 !}}}
 !
 end module test_suite1
