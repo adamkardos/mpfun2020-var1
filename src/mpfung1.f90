@@ -98,7 +98,7 @@ private &
   mp_negr, mp_negz, mp_negz_arr, &
   mp_mulrr, mp_muldr, mp_mulrd, mp_mulir, mp_mulri, mp_mulzz, &
   mp_muldz, mp_mulzd, mp_muldcz, mp_mulzdc, mp_mulrz, mp_mulzr, &
-  mp_mulz_zarr, &
+  mp_mulz_zarr, mp_mulr_zarr, &
   mp_divrr, mp_divdr, mp_divrd, mp_divir, mp_divri, mp_divzz, &
   mp_divdz, mp_divzd, mp_divdcz, mp_divzdc, mp_divrz, mp_divzr, &
   mp_expri, mp_exprr, mp_expzi, mp_expzz, mp_exprz, mp_expzr
@@ -207,6 +207,7 @@ interface operator (*)
   module procedure mp_mulrz
   module procedure mp_mulzr
   module procedure mp_mulz_zarr
+  module procedure mp_mulr_zarr
 end interface
 
 interface operator (/)
@@ -1549,6 +1550,21 @@ contains
     mp_mulzr%mpc(l3) = mpwds6
     call mpmul (za%mpc, rb%mpr, mp_mulzr%mpc, mpnw)
     call mpmul (za%mpc(l1:), rb%mpr, mp_mulzr%mpc(l3:), mpnw)
+    return
+  end function
+
+  function mp_mulr_zarr (ra, z_arr)
+    implicit none
+    type (mp_real) , intent (in) :: ra
+    type (mp_complex) , dimension(:) , intent (in) :: z_arr
+    type (mp_complex) , dimension(lbound(z_arr, 1) : ubound(z_arr, 1)) :: mp_mulr_zarr
+!
+    integer :: i
+!
+    do i=lbound(z_arr, 1), ubound(z_arr, 1)
+      mp_mulr_zarr(i) = ra*z_arr(i)
+    end do
+!
     return
   end function
 

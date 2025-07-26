@@ -17,6 +17,8 @@ subroutine collect_suite1(testsuite)
       test_mp_negz_arr), &
     new_unittest("mp_mulz_zarr", &
       test_mp_mulz_zarr), &
+    new_unittest("mp_mulr_zarr", &
+      test_mp_mulr_zarr), &
     new_unittest("mp_eqzarr_r", &
       test_mp_eqzarr_r) &
     ]
@@ -123,6 +125,46 @@ implicit none
   end do
 !
 end subroutine test_mp_mulz_zarr
+!}}}
+
+!{{{ mp_mulr_zarr
+subroutine test_mp_mulr_zarr(error)
+use mpmodule
+implicit none
+!
+  type(error_type), allocatable, intent(out) :: error
+!
+  integer :: i, j
+!
+  type(mp_real)    :: val
+!
+  integer , dimension(3) , parameter :: lbound_arr = (/1, 0, -2/)
+  integer , dimension(3) , parameter :: ubound_arr = (/5, 4, +2/)
+  type(mp_complex) , dimension(:) , allocatable :: arr1, arr2
+!
+  val = '1.5'
+!
+  do i=1, size(lbound_arr, 1)
+    allocate( &
+      arr1(lbound_arr(i) : ubound_arr(i)), &
+      arr2(lbound_arr(i) : ubound_arr(i))  &
+    )
+!
+    do j=lbound_arr(i), ubound_arr(i)
+      arr1(j) = mpcmplx(cmplx(j, 0, kind=kind(1d0)))
+    end do
+!
+    arr2 = val*arr1
+!
+    do j=lbound_arr(i), ubound_arr(i)
+      call check(error, arr2(j).eq.val*arr1(j), .true.)
+      if (allocated(error)) return
+    end do
+!
+    deallocate(arr1, arr2)
+  end do
+!
+end subroutine test_mp_mulr_zarr
 !}}}
 
 !{{{ mp_eqzarr_r
