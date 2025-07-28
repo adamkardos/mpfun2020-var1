@@ -580,6 +580,7 @@ end interface
 
 interface mpreald
   module procedure mp_dtor2
+  module procedure mpreald_arr
 end interface
 
 interface mprealq
@@ -3582,6 +3583,27 @@ contains
     i1 = 0
     call mpdmc (da, i1, mp_dtor2%mpr, mpnw)
     return
+  end function
+
+  function mpreald_arr(da_arr, iprec) result(arr)
+    implicit none
+!
+    real(mprknd) , dimension(:) , intent(in) :: da_arr
+!
+    type(mp_real) , dimension(lbound(da_arr, 1) : ubound(da_arr, 1)) :: arr
+!
+    integer , optional , intent (in):: iprec
+!
+    integer :: i
+!
+    do i=lbound(da_arr, 1), ubound(da_arr, 1)
+      if (present(iprec)) then
+        arr(i) = mp_dtor2(da_arr(i), iprec)
+      else
+        arr(i) = mp_dtor2(da_arr(i))
+      end if
+    end do
+!
   end function
 
   subroutine mp_eform (ra, nb, nd, b)

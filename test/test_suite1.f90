@@ -20,7 +20,9 @@ subroutine collect_suite1(testsuite)
     new_unittest("mp_mulr_zarr", &
       test_mp_mulr_zarr), &
     new_unittest("mp_eqzarr_r", &
-      test_mp_eqzarr_r) &
+      test_mp_eqzarr_r), &
+    new_unittest("mpreald_arr", &
+      test_mpreald_arr) &
     ]
 
 end subroutine collect_suite1
@@ -200,6 +202,43 @@ implicit none
   end do
 !
 end subroutine test_mp_eqzarr_r
+!}}}
+
+!{{{ mpreald_arr
+subroutine test_mpreald_arr(error)
+use mpmodule
+implicit none
+!
+  type(error_type), allocatable, intent(out) :: error
+!
+  integer :: i, j
+!
+  type(mp_real) :: rval
+!
+  integer , dimension(3) , parameter :: lbound_arr = (/1, 0, -2/)
+  integer , dimension(3) , parameter :: ubound_arr = (/5, 4, +2/)
+  real(kind(1d0)) , dimension(:) , allocatable :: d_arr
+  type(mp_real) , dimension(:) , allocatable :: arr
+!
+  do i=1, size(lbound_arr, 1)
+    allocate( &
+      d_arr(lbound_arr(i) : ubound_arr(i)), &
+      arr(lbound_arr(i) : ubound_arr(i)) &
+    )
+!
+    d_arr = (/1.234, 4.321, 2.345, 5.432, 3.456/)
+!
+    arr = mpreald(d_arr)
+!
+    do j=lbound_arr(i), ubound_arr(i)
+      call check(error, arr(j).eq.d_arr(j), .true.)
+      if (allocated(error)) return
+    end do
+!
+    deallocate(arr, d_arr)
+  end do
+!
+end subroutine test_mpreald_arr
 !}}}
 !
 end module test_suite1
